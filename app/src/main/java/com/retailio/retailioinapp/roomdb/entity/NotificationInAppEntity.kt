@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.retailio.retailioinapp.roomdb.DBContract
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 
 @Entity(tableName = DBContract.RetailioInAppNotificationTable.TABLE_NAME)
 @Parcelize

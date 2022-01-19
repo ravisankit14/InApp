@@ -13,9 +13,12 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.retailio.retailioinapp.R
+import com.retailio.retailioinapp.roomdb.InAppRoomDatabase
+import com.retailio.retailioinapp.roomdb.entity.NotificationInAppEntity
 import java.io.IOException
 import java.io.InputStream
 import java.net.URL
+import java.util.concurrent.Executors
 
 var intent: Intent? = Intent()
 const val CHANNEL_ID = "retailio_in_app_channel"
@@ -128,4 +131,34 @@ fun getBitmap(uri: String?): Bitmap{
         }
     }
     return bitmap!!
+}
+
+fun saveInAppNotification(mContext: Context, pMap: Map<String, String>){
+
+    val expiryTime = if (pMap.containsKey("expiryTime")) pMap["expiryTime"]!!.toLong() else 0
+
+    val notificationInAppEntity = NotificationInAppEntity(
+        0,
+        if (pMap.containsKey("inAppId")) pMap["inAppId"]!!.toLong() else 0L,
+        if (pMap.containsKey("campaignId")) pMap["campaignId"]!!.toLong() else 0L,
+        if (pMap.containsKey("campaignName")) pMap["campaignName"].toString() else "",
+        if (pMap.containsKey("title")) pMap["title"].toString() else "",
+        if (pMap.containsKey("body")) pMap["body"].toString() else "",
+        if (pMap.containsKey("imageUrl")) pMap["imageUrl"].toString() else "",
+        if (pMap.containsKey("type")) pMap["type"].toString() else "",
+        if (pMap.containsKey("buttonLabel")) pMap["buttonLabel"].toString() else "",
+        if (pMap.containsKey("deepLinkUrl")) pMap["deepLinkUrl"].toString() else "",
+        expiryTime + System.currentTimeMillis(),
+        if (pMap.containsKey("templateType")) pMap["templateType"].toString() else "",
+        if (pMap.containsKey("location")) pMap["location"].toString() else "",
+        if(pMap.containsValue("priority")) pMap["priority"].toBoolean() else false,
+        if (pMap.containsKey("delay")) pMap["delay"] else "",
+        if(pMap.containsValue("isInAppNotification")) pMap["isInAppNotification"].toBoolean() else false,
+        false,
+        System.currentTimeMillis()
+    )
+
+    Executors.newSingleThreadExecutor().execute {
+        InAppRoomDatabase.getInstance(mContext)?.notificationInAppDao()?.insert(notificationInAppEntity)
+    }
 }

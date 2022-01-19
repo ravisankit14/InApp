@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RetailIo In App Notification</string>
+    <string name="okay_got_it">Okay, got it</string>
+    <string name="in_app_mini_tag">InAppMini</string>
 </resources>

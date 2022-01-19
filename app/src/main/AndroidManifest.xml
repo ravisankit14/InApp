@@ -24,7 +24,7 @@
         <activity
             android:name=".ui.InAppCentreActivity"
             android:exported="false"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
 
     </application>
 
