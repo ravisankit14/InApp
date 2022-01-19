@@ -1,6 +1,5 @@
 package com.retailio.retailioinapp.ui
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -37,7 +36,6 @@ fun getNotificationIntent(pMap: Map<String, String>): Intent{
     return intent!!
 }
 
-@SuppressLint("UnspecifiedImmutableFlag")
 fun notification(activity: Context, pMap: Map<String, String>) {
 
     getNotificationIntent(pMap)
@@ -65,17 +63,10 @@ fun notification(activity: Context, pMap: Map<String, String>) {
         mNotificationManager.createNotificationChannel(channel)
     }
     val requestCode = 1000 + (System.currentTimeMillis() % 1000).toInt()
-    val pendingIntent: PendingIntent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        PendingIntent.getActivity(
-            activity, requestCode, intent,
-            PendingIntent.FLAG_MUTABLE
-        )
-    }else {
-        PendingIntent.getActivity(
-            activity, requestCode, intent,
-            PendingIntent.FLAG_ONE_SHOT
-        )
-    }
+    val pendingIntent: PendingIntent = PendingIntent.getActivity(
+        activity, requestCode, intent,
+        PendingIntent.FLAG_ONE_SHOT
+    )
     val mBuilder: NotificationCompat.Builder = NotificationCompat.Builder(activity, CHANNEL_ID)
 
     if (!imageUri.isNullOrEmpty()) {
