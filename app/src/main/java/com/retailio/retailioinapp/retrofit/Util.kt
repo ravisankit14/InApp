@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 private fun retrofit(): Retrofit {
 
-    return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL)
+    return Retrofit.Builder().baseUrl("https://staging.retailio.in/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 }
