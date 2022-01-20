@@ -11,9 +11,4 @@
         android:id="@+id/echo_center"
         layout="@layout/echo_layout_center"/>
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
