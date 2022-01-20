@@ -46,8 +46,6 @@ class InAppCentreActivity : AppCompatActivity(), View.OnClickListener {
         binding.echoCenter.tvDeeplink.setOnClickListener(this)
 
         mData = intent?.getParcelableExtra(IN_APP_CENTER)
-
-        //fetchInAppData()
         setData()
     }
 
@@ -86,15 +84,6 @@ class InAppCentreActivity : AppCompatActivity(), View.OnClickListener {
         InAppRoomDatabase.getInstance(applicationContext).notificationInAppDao().updateNotification(id)
     }
 
-    private fun fetchInAppData(){
-        lifecycleScope.launch(Dispatchers.IO) {
-            val data = InAppRoomDatabase.getInstance(applicationContext).notificationInAppDao().getNotification(0,
-                InAppLocationType.HOMEPAGE.name,  System.currentTimeMillis())
-
-            data.let { inAppData.postValue(it) }
-        }
-    }
-
     override fun onClick(v: View?) {
         when(v?.id){
             binding.echoCenter.ivCross.id -> {
@@ -102,24 +91,15 @@ class InAppCentreActivity : AppCompatActivity(), View.OnClickListener {
             }
             binding.echoCenter.tvDeeplink.id -> {
                 if (mData?.deeplink!!.isNotBlank()) {
-                    val deepLinkUrl = mData?.deeplink!!.trim { it <= ' ' }
-                    val externalLink = Uri.parse(deepLinkUrl)
-                    if (externalLink.queryParameterNames.contains(WEBVIEW_APP)) {
-                        //addFragment(DynamicWebViewFragment.getInstance("Deeplink",deepLinkUrl))
-                    }else {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(mData?.deeplink))
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                        if (intent.resolveActivity(this.packageManager) != null)
-                            startActivity(intent)
-                        finish()
-                    }
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(mData?.deeplink))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    if (intent.resolveActivity(this.packageManager) != null)
+                        startActivity(intent)
+                    finish()
                 }else{
                     finish()
                 }
             }
         }
     }
-
-    private var inAppData = MutableLiveData<NotificationInAppEntity>()
-    private val _inAppData: LiveData<NotificationInAppEntity> = inAppData
 }

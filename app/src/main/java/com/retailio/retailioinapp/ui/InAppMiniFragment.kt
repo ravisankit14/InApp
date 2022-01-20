@@ -5,11 +5,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.retailio.retailioinapp.R
 import com.retailio.retailioinapp.databinding.ActivityInAppMiniBinding
+import com.retailio.retailioinapp.roomdb.InAppRoomDatabase
 import com.retailio.retailioinapp.roomdb.entity.NotificationInAppEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class InAppMiniFragment : Fragment(), View.OnClickListener {
 
@@ -58,6 +62,12 @@ class InAppMiniFragment : Fragment(), View.OnClickListener {
             .load(mData?.imageUrl)
             .into(binding.echoMini.ivThumbnail)
 
+        updateData(mData!!._id)
+
+    }
+
+    private fun updateData(id: Long) = lifecycleScope.launch(Dispatchers.IO) {
+        InAppRoomDatabase.getInstance(requireActivity()).notificationInAppDao().updateNotification(id)
     }
 
     companion object {
