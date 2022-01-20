@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
@@ -173,9 +174,13 @@ fun showInAppNotification(mContext: FragmentActivity){
     Executors.newSingleThreadExecutor().execute {
         mdata = InAppRoomDatabase.getInstance(mContext).notificationInAppDao().getNotification(0,
             InAppLocationType.HOMEPAGE.name,  System.currentTimeMillis())
+
+        Log.d("dataa", "$mdata")
     }
+    Log.d("dataa 1", "$mdata")
 
     mContext.runOnUiThread {
+        Log.d("dataa 2", "$mdata")
         if(mdata?.type == "CENTRE"){
             mContext.startActivity(InAppCentreActivity.getLaunchIntent(mContext, mdata!!))
         }else if(mdata?.type == "MINI"){
