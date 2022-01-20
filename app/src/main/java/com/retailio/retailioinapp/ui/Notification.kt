@@ -1,8 +1,6 @@
 package com.retailio.retailioinapp.ui
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -12,7 +10,13 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
 import com.retailio.retailioinapp.R
+import com.retailio.retailioinapp.enum.InAppLocationType
 import com.retailio.retailioinapp.roomdb.InAppRoomDatabase
 import com.retailio.retailioinapp.roomdb.entity.NotificationInAppEntity
 import java.io.IOException
@@ -159,6 +163,27 @@ fun saveInAppNotification(mContext: Context, pMap: Map<String, String>){
     )
 
     Executors.newSingleThreadExecutor().execute {
-        InAppRoomDatabase.getInstance(mContext)?.notificationInAppDao()?.insert(notificationInAppEntity)
+        InAppRoomDatabase.getInstance(mContext).notificationInAppDao().insert(notificationInAppEntity)
     }
+}
+
+fun showInAppNotification(mContext: FragmentActivity){
+    var mdata: NotificationInAppEntity? = null
+
+    Executors.newSingleThreadExecutor().execute {
+        mdata = InAppRoomDatabase.getInstance(mContext).notificationInAppDao().getNotification(0,
+            InAppLocationType.HOMEPAGE.name,  System.currentTimeMillis())
+    }
+
+    mContext.runOnUiThread {
+        if(mdata?.type == "CENTRE"){
+            mContext.startActivity(InAppCentreActivity.getLaunchIntent(mContext, mdata!!))
+        }else if(mdata?.type == "MINI"){
+            val inApp = InAppMiniFragment.getInstance(mdata!!)
+            val transaction = mContext.supportFragmentManager.beginTransaction()
+            transaction.add(android.R.id.content, inApp)
+            transaction.commitAllowingStateLoss()
+        }
+    }
+
 }

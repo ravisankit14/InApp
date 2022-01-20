@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.retailio.retailioinapp.SingletonHolder
 import com.retailio.retailioinapp.roomdb.dao.NotificationInAppEntityDao
 import com.retailio.retailioinapp.roomdb.entity.NotificationInAppEntity
 
@@ -15,24 +16,9 @@ abstract class InAppRoomDatabase: RoomDatabase() {
         notificationInAppDao().deleteAll()
     }
 
-    companion object {
-        private var INSTANCE: InAppRoomDatabase? = null
-
-        @JvmStatic
-        fun getInstance(context: Context): InAppRoomDatabase? {
-            if (INSTANCE == null) {
-                synchronized(InAppRoomDatabase::class) {
-                    INSTANCE = Room.databaseBuilder(
-                        context.applicationContext,
-                        InAppRoomDatabase::class.java, "in_app_database")
-                        .build()
-                }
-            }
-            return INSTANCE
-        }
-
-        fun destroyInstance() {
-            INSTANCE = null
-        }
-    }
+    companion object : SingletonHolder<InAppRoomDatabase, Context>({
+        Room.databaseBuilder(it.applicationContext,
+            InAppRoomDatabase::class.java, "in_app_database")
+            .build()
+    })
 }

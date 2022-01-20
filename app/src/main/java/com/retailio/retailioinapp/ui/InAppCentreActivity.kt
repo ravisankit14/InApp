@@ -1,5 +1,6 @@
 package com.retailio.retailioinapp.ui
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +26,17 @@ class InAppCentreActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityInAppCentreBinding
     private var mData: NotificationInAppEntity? = null
 
+    companion object {
+        private const val IN_APP_CENTER = "in_app_center"
+        @JvmStatic
+        fun getLaunchIntent(context: Context, it: NotificationInAppEntity): Intent {
+            val intent = Intent(context, InAppCentreActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            intent.putExtra(IN_APP_CENTER, it)
+            return intent
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityInAppCentreBinding.inflate(layoutInflater)
@@ -33,15 +45,17 @@ class InAppCentreActivity : AppCompatActivity(), View.OnClickListener {
         binding.echoCenter.ivCross.setOnClickListener(this)
         binding.echoCenter.tvDeeplink.setOnClickListener(this)
 
-        fetchInAppData()
+        mData = intent?.getParcelableExtra(IN_APP_CENTER)
+
+        //fetchInAppData()
         setData()
     }
 
     private fun setData(){
 
-        _inAppData.observe(this, {
-            it?.let {
-                mData = it
+//        _inAppData.observe(this, {
+//            it?.let {
+               // mData = it
                 if(mData?.buttonLabel.isNullOrEmpty())
                     binding.echoCenter.tvDeeplink.visibility = View.GONE
 
@@ -64,17 +78,17 @@ class InAppCentreActivity : AppCompatActivity(), View.OnClickListener {
 
                 //InAppSessionService.IN_APP_NOTIF_VIEW_COUNT_SESSION += 1
                 updateData(mData!!._id)
-            }
-        })
+//            }
+//        })
     }
 
     private fun updateData(id: Long) = lifecycleScope.launch(Dispatchers.IO) {
-        InAppRoomDatabase.getInstance(applicationContext)?.notificationInAppDao()?.updateNotification(id)
+        InAppRoomDatabase.getInstance(applicationContext).notificationInAppDao().updateNotification(id)
     }
 
     private fun fetchInAppData(){
         lifecycleScope.launch(Dispatchers.IO) {
-            val data = InAppRoomDatabase.getInstance(applicationContext)?.notificationInAppDao()?.getNotification(0,
+            val data = InAppRoomDatabase.getInstance(applicationContext).notificationInAppDao().getNotification(0,
                 InAppLocationType.HOMEPAGE.name,  System.currentTimeMillis())
 
             data.let { inAppData.postValue(it) }
