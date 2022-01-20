@@ -176,19 +176,17 @@ fun showInAppNotification(mContext: FragmentActivity){
             InAppLocationType.HOMEPAGE.name,  System.currentTimeMillis())
 
         Log.d("dataa", "$mdata")
-    }
-    Log.d("dataa 1", "$mdata")
 
-    mContext.runOnUiThread {
-        Log.d("dataa 2", "$mdata")
-        if(mdata?.type == "CENTRE"){
-            mContext.startActivity(InAppCentreActivity.getLaunchIntent(mContext, mdata!!))
-        }else if(mdata?.type == "MINI"){
-            val inApp = InAppMiniFragment.getInstance(mdata!!)
-            val transaction = mContext.supportFragmentManager.beginTransaction()
-            transaction.add(android.R.id.content, inApp)
-            transaction.commitAllowingStateLoss()
+        mContext.runOnUiThread {
+            Log.d("dataa 1", "$mdata")
+            if(mdata?.type == "CENTRE"){
+                mContext.startActivity(InAppCentreActivity.getLaunchIntent(mContext, mdata!!))
+            }else if(mdata?.type == "MINI"){
+                val inApp = InAppMiniFragment.getInstance(mdata!!)
+                val transaction = mContext.supportFragmentManager.beginTransaction()
+                transaction.add(android.R.id.content, inApp)
+                transaction.commitAllowingStateLoss()
+            }
         }
     }
-
 }
