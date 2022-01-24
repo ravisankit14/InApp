@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.retailio.retailioinapp.R
 import com.retailio.retailioinapp.databinding.ActivityInAppMiniBinding
+import com.retailio.retailioinapp.enum.InAppSessionService
 import com.retailio.retailioinapp.roomdb.InAppRoomDatabase
 import com.retailio.retailioinapp.roomdb.entity.NotificationInAppEntity
 import kotlinx.coroutines.Dispatchers
@@ -62,6 +63,7 @@ class InAppMiniFragment : Fragment(), View.OnClickListener {
             .load(mData?.imageUrl)
             .into(binding.echoMini.ivThumbnail)
 
+        InAppSessionService.IN_APP_NOTIF_VIEW_COUNT_SESSION += 1
         updateData(mData!!._id)
 
     }

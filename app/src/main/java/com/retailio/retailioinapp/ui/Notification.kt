@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import com.retailio.retailioinapp.R
 import com.retailio.retailioinapp.enum.InAppLocationType
+import com.retailio.retailioinapp.enum.InAppSessionService
 import com.retailio.retailioinapp.roomdb.InAppRoomDatabase
 import com.retailio.retailioinapp.roomdb.entity.NotificationInAppEntity
 import java.io.IOException
@@ -44,6 +45,7 @@ fun getNotificationIntent(pMap: Map<String, String>): Intent{
     return intent!!
 }
 
+/* Show notification coming from firebase service */
 fun notification(activity: Context, pMap: Map<String, String>) {
 
     getNotificationIntent(pMap)
@@ -138,6 +140,7 @@ fun getBitmap(uri: String?): Bitmap{
     return bitmap!!
 }
 
+/* Saving data in Room Database*/
 fun saveInAppNotification(mContext: Context, pMap: Map<String, String>){
 
     val expiryTime = if (pMap.containsKey("expiryTime")) pMap["expiryTime"]!!.toLong() else 0
@@ -168,24 +171,30 @@ fun saveInAppNotification(mContext: Context, pMap: Map<String, String>){
     }
 }
 
+/* Fetch data from database and show accordingly i.e.
+* If Centre, then show centre
+* else Mini
+* */
 fun showInAppNotification(mContext: FragmentActivity){
-    var mdata: NotificationInAppEntity? = null
+    var mdata: NotificationInAppEntity?
 
     Executors.newSingleThreadExecutor().execute {
         mdata = InAppRoomDatabase.getInstance(mContext).notificationInAppDao().getNotification(0,
             InAppLocationType.HOMEPAGE.name,  System.currentTimeMillis())
 
-        Log.d("dataa", "$mdata")
+        Log.d("RetailIoInApp data", "$mdata")
 
-        mContext.runOnUiThread {
-            Log.d("dataa 1", "$mdata")
-            if(mdata?.type == "CENTRE"){
-                mContext.startActivity(InAppCentreActivity.getLaunchIntent(mContext, mdata!!))
-            }else if(mdata?.type == "MINI"){
-                val inApp = InAppMiniFragment.getInstance(mdata!!)
-                val transaction = mContext.supportFragmentManager.beginTransaction()
-                transaction.add(android.R.id.content, inApp)
-                transaction.commitAllowingStateLoss()
+        if(mdata != null && InAppSessionService.IN_APP_NOTIF_VIEW_COUNT_SESSION <= 2) {
+            mContext.runOnUiThread {
+                Log.d("RetailIoInApp 1", "$mdata")
+                if (mdata?.type == "CENTRE") {
+                    mContext.startActivity(InAppCentreActivity.getLaunchIntent(mContext, mdata!!))
+                } else if (mdata?.type == "MINI") {
+                    val inApp = InAppMiniFragment.getInstance(mdata!!)
+                    val transaction = mContext.supportFragmentManager.beginTransaction()
+                    transaction.add(android.R.id.content, inApp)
+                    transaction.commitAllowingStateLoss()
+                }
             }
         }
     }

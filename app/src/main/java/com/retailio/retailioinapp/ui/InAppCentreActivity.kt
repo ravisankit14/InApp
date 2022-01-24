@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.retailio.retailioinapp.R
 import com.retailio.retailioinapp.databinding.ActivityInAppCentreBinding
 import com.retailio.retailioinapp.enum.InAppLocationType
+import com.retailio.retailioinapp.enum.InAppSessionService
 import com.retailio.retailioinapp.retrofit.WEBVIEW_APP
 import com.retailio.retailioinapp.retrofit.addFragment
 import com.retailio.retailioinapp.roomdb.InAppRoomDatabase
@@ -51,33 +52,28 @@ class InAppCentreActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setData(){
 
-//        _inAppData.observe(this, {
-//            it?.let {
-               // mData = it
-                if(mData?.buttonLabel.isNullOrEmpty())
-                    binding.echoCenter.tvDeeplink.visibility = View.GONE
+        if(mData?.buttonLabel.isNullOrEmpty())
+            binding.echoCenter.tvDeeplink.visibility = View.GONE
 
-                if(mData?.deeplink.isNullOrEmpty())
-                    mData?.buttonLabel = getString(R.string.okay_got_it)
+        if(mData?.deeplink.isNullOrEmpty())
+            mData?.buttonLabel = getString(R.string.okay_got_it)
 
-                if(mData?.header.isNullOrEmpty())
-                    binding.echoCenter.tvTitle.visibility = View.GONE
+        if(mData?.header.isNullOrEmpty())
+            binding.echoCenter.tvTitle.visibility = View.GONE
 
-                if(mData?.body.isNullOrEmpty())
-                    binding.echoCenter.tvDescription.visibility = View.GONE
+        if(mData?.body.isNullOrEmpty())
+            binding.echoCenter.tvDescription.visibility = View.GONE
 
-                binding.echoCenter.tvDescription.text = mData?.body
-                binding.echoCenter.tvTitle.text = mData?.header
-                binding.echoCenter.tvDeeplink.text = mData?.buttonLabel
-                Glide.with(this)
-                    .applyDefaultRequestOptions(RequestOptions().placeholder(R.mipmap.ic_launcher))
-                    .load(mData?.imageUrl)
-                    .into(binding.echoCenter.ivThumbnail)
+        binding.echoCenter.tvDescription.text = mData?.body
+        binding.echoCenter.tvTitle.text = mData?.header
+        binding.echoCenter.tvDeeplink.text = mData?.buttonLabel
+        Glide.with(this)
+            .applyDefaultRequestOptions(RequestOptions().placeholder(R.mipmap.ic_launcher))
+            .load(mData?.imageUrl)
+            .into(binding.echoCenter.ivThumbnail)
 
-                //InAppSessionService.IN_APP_NOTIF_VIEW_COUNT_SESSION += 1
-                updateData(mData!!._id)
-//            }
-//        })
+        InAppSessionService.IN_APP_NOTIF_VIEW_COUNT_SESSION += 1
+        updateData(mData!!._id)
     }
 
     private fun updateData(id: Long) = lifecycleScope.launch(Dispatchers.IO) {
